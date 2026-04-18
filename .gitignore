@@ -1,0 +1,10 @@
+.claude*
+.qwen
+__pycache__
+*.pyc
+.svn
+Downloaded
+Old
+*.sqlite3
+venv/
+.env

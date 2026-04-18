@@ -1,0 +1,29 @@
+{
+  "level": 2,
+  "title_ru": "Уровень 2. Базовый — расширенный цех, одиночные поломки",
+  "description_ru": "6 станков, 3 типа изделий, 8 заказов. На смену в среднем одна поломка (15-60 мин). Копилот полезен, но можно решить и руками.",
+  "machines": [
+    {"id": "M1", "type": "lathe", "name_ru": "Токарный-1"},
+    {"id": "M2", "type": "lathe", "name_ru": "Токарный-2"},
+    {"id": "M3", "type": "mill",  "name_ru": "Фрезерный-1"},
+    {"id": "M4", "type": "mill",  "name_ru": "Фрезерный-2"},
+    {"id": "M5", "type": "qc",    "name_ru": "ОТК"},
+    {"id": "M6", "type": "pack",  "name_ru": "Упаковка"}
+  ],
+  "products": {
+    "shaft":   [{"machine_type": "lathe", "duration_min": 25}, {"machine_type": "qc", "duration_min": 5}, {"machine_type": "pack", "duration_min": 5}],
+    "flange":  [{"machine_type": "mill",  "duration_min": 20}, {"machine_type": "qc", "duration_min": 5}, {"machine_type": "pack", "duration_min": 5}],
+    "bracket": [{"machine_type": "mill",  "duration_min": 15}, {"machine_type": "lathe", "duration_min": 10}, {"machine_type": "qc", "duration_min": 5}, {"machine_type": "pack", "duration_min": 5}]
+  },
+  "orders": [
+    {"id": "ORD-001", "product": "shaft",   "qty": 3, "deadline_min": 180, "priority": 1},
+    {"id": "ORD-002", "product": "flange",  "qty": 2, "deadline_min": 200, "priority": 2},
+    {"id": "ORD-003", "product": "bracket", "qty": 4, "deadline_min": 360, "priority": 2},
+    {"id": "ORD-004", "product": "shaft",   "qty": 2, "deadline_min": 240, "priority": 2},
+    {"id": "ORD-005", "product": "flange",  "qty": 3, "deadline_min": 420, "priority": 3},
+    {"id": "ORD-006", "product": "bracket", "qty": 1, "deadline_min": 300, "priority": 3},
+    {"id": "ORD-007", "product": "shaft",   "qty": 1, "deadline_min": 540, "priority": 3},
+    {"id": "ORD-008", "product": "flange",  "qty": 2, "deadline_min": 480, "priority": 2}
+  ],
+  "events_profile": {"breakdown_per_shift": 1, "rush_order_per_shift": 0, "supply_delay_per_shift": 0, "no_operator_per_shift": 0}
+}

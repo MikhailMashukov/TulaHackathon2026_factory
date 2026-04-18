@@ -1,0 +1,31 @@
+{
+  "level": 3,
+  "title_ru": "Уровень 3. Сборочный цех — разветвлённые маршруты",
+  "description_ru": "6 станков, 3 типа изделий, 10 заказов. Длинный маршрут у изделия assembly (до 7 операций), плотные дедлайны. На смену в среднем поломка + срочный заказ (2 события).",
+  "machines": [
+    {"id": "M1", "type": "lathe",    "name_ru": "Токарный"},
+    {"id": "M2", "type": "mill",     "name_ru": "Фрезерный"},
+    {"id": "M3", "type": "weld",     "name_ru": "Сварочный пост"},
+    {"id": "M4", "type": "assembly", "name_ru": "Сборочный участок"},
+    {"id": "M5", "type": "qc",       "name_ru": "ОТК"},
+    {"id": "M6", "type": "pack",     "name_ru": "Упаковка"}
+  ],
+  "products": {
+    "shaft":    [{"machine_type": "lathe", "duration_min": 30}, {"machine_type": "qc", "duration_min": 5}, {"machine_type": "pack", "duration_min": 5}],
+    "housing":  [{"machine_type": "mill",  "duration_min": 35}, {"machine_type": "weld", "duration_min": 25}, {"machine_type": "qc", "duration_min": 10}, {"machine_type": "pack", "duration_min": 5}],
+    "assembly": [{"machine_type": "mill", "duration_min": 20}, {"machine_type": "lathe", "duration_min": 15}, {"machine_type": "weld", "duration_min": 20}, {"machine_type": "assembly", "duration_min": 30}, {"machine_type": "qc", "duration_min": 10}, {"machine_type": "assembly", "duration_min": 10}, {"machine_type": "pack", "duration_min": 5}]
+  },
+  "orders": [
+    {"id": "ORD-001", "product": "assembly", "qty": 1, "deadline_min": 360, "priority": 1},
+    {"id": "ORD-002", "product": "housing",  "qty": 2, "deadline_min": 240, "priority": 1},
+    {"id": "ORD-003", "product": "shaft",    "qty": 3, "deadline_min": 180, "priority": 2},
+    {"id": "ORD-004", "product": "housing",  "qty": 1, "deadline_min": 300, "priority": 2},
+    {"id": "ORD-005", "product": "assembly", "qty": 1, "deadline_min": 480, "priority": 2},
+    {"id": "ORD-006", "product": "shaft",    "qty": 2, "deadline_min": 360, "priority": 2},
+    {"id": "ORD-007", "product": "housing",  "qty": 1, "deadline_min": 540, "priority": 2},
+    {"id": "ORD-008", "product": "shaft",    "qty": 1, "deadline_min": 240, "priority": 3},
+    {"id": "ORD-009", "product": "housing",  "qty": 2, "deadline_min": 480, "priority": 2},
+    {"id": "ORD-010", "product": "assembly", "qty": 1, "deadline_min": 600, "priority": 2}
+  ],
+  "events_profile": {"breakdown_per_shift": 1, "rush_order_per_shift": 1, "supply_delay_per_shift": 0, "no_operator_per_shift": 0}
+}

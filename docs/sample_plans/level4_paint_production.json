@@ -1,0 +1,35 @@
+{
+  "level": 4,
+  "title_ru": "Уровень 4. Процессное производство — лакокрасочный цех",
+  "description_ru": "6 единиц оборудования (2 блендера, 2 реактора, 2 линии розлива), 3 типа продуктов (грунт + 2 цвета краски), 10 заказов. Ключевая сложность — переналадка между цветами (промывка 30 мин при смене цвета). Копилот подсказывает группировку заказов по цвету. Сценарий вдохновлён описанием RaytecAPS для процессного производства.",
+  "machines": [
+    {"id": "B1", "type": "blender",   "name_ru": "Блендер-1"},
+    {"id": "B2", "type": "blender",   "name_ru": "Блендер-2"},
+    {"id": "R1", "type": "reactor",   "name_ru": "Реактор-1"},
+    {"id": "R2", "type": "reactor",   "name_ru": "Реактор-2"},
+    {"id": "L1", "type": "fill_line", "name_ru": "Линия розлива А (банки)"},
+    {"id": "L2", "type": "fill_line", "name_ru": "Линия розлива Б (вёдра)"}
+  ],
+  "products": {
+    "primer_grey": [{"machine_type": "blender", "duration_min": 30}, {"machine_type": "reactor", "duration_min": 45, "color_tag": "grey"}, {"machine_type": "fill_line", "duration_min": 20, "color_tag": "grey"}],
+    "paint_red":   [{"machine_type": "blender", "duration_min": 30}, {"machine_type": "reactor", "duration_min": 60, "color_tag": "red"},  {"machine_type": "fill_line", "duration_min": 25, "color_tag": "red"}],
+    "paint_blue":  [{"machine_type": "blender", "duration_min": 30}, {"machine_type": "reactor", "duration_min": 60, "color_tag": "blue"}, {"machine_type": "fill_line", "duration_min": 25, "color_tag": "blue"}]
+  },
+  "setup_rules": {
+    "color_change_min": 30,
+    "comment": "Переход между разными color_tag на одном оборудовании требует 30 мин промывки. Между одинаковыми — 0 мин."
+  },
+  "orders": [
+    {"id": "ORD-001", "product": "paint_red",   "qty": 2, "deadline_min": 240, "priority": 1},
+    {"id": "ORD-002", "product": "paint_red",   "qty": 1, "deadline_min": 300, "priority": 2},
+    {"id": "ORD-003", "product": "paint_blue",  "qty": 3, "deadline_min": 360, "priority": 2},
+    {"id": "ORD-004", "product": "primer_grey", "qty": 4, "deadline_min": 420, "priority": 3},
+    {"id": "ORD-005", "product": "paint_red",   "qty": 1, "deadline_min": 480, "priority": 3},
+    {"id": "ORD-006", "product": "paint_blue",  "qty": 2, "deadline_min": 300, "priority": 2},
+    {"id": "ORD-007", "product": "paint_red",   "qty": 2, "deadline_min": 420, "priority": 2},
+    {"id": "ORD-008", "product": "paint_blue",  "qty": 1, "deadline_min": 600, "priority": 3},
+    {"id": "ORD-009", "product": "primer_grey", "qty": 2, "deadline_min": 360, "priority": 2},
+    {"id": "ORD-010", "product": "paint_red",   "qty": 1, "deadline_min": 540, "priority": 3}
+  ],
+  "events_profile": {"breakdown_per_shift": 0, "rush_order_per_shift": 0, "supply_delay_per_shift": 2, "no_operator_per_shift": 0, "overload_per_shift": 0}
+}
