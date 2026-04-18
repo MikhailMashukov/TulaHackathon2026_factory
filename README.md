@@ -1,0 +1,1 @@
+# TulaHackathon2026_factory
