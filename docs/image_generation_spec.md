@@ -14,6 +14,10 @@ Automatic1111 WebUI работает на сервере Михаила (3060, 1
 - API endpoint: `http://192.168.0.80:6290/sdapi/v1/` (`txt2img`, `options`, `sd-models`)
 - Разрешение для Claude Code: `Bash(curl *192.168.0.80:6290*)` (с пробелом после `curl`, чтобы `curl222` и подобное не матчилось)
 
+API endpoint запускается из Докера AIGen http://192.168.0.80:6280 через 
+```cd /project/SDWebUI
+./webui.sh --api```
+
 ### Установленные модели
 
 ```
