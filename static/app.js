@@ -269,12 +269,10 @@ function renderMachines(state) {
         </div>
         <div class="machine-layout">
           <div class="buffer">
-            <h4>Вход</h4>
             ${renderMaterialStacks(inputByMachine[m.id] || {})}
           </div>
           <div class="machine-center">
             <div class="machine-icon" title="${typeRu}">${typeIcon}</div>
-            <div class="machine-kind">${typeRu}</div>
           </div>
           <div class="machine-meta-grid">
             <div class="meta-label">статус</div>
