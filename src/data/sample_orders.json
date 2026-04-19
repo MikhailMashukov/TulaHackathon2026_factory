@@ -35,7 +35,7 @@
     "fan": [
       {
         "machine_type": "plastic_press",
-        "duration_min": 20,
+        "duration_min": 10,
         "consumes": {
           "polymer_pellets": 4,
           "mold_release": 1
@@ -46,7 +46,7 @@
       },
       {
         "machine_type": "plastic_press",
-        "duration_min": 18,
+        "duration_min": 8,
         "consumes": {
           "polymer_pellets": 3,
           "mold_release": 1
@@ -57,7 +57,7 @@
       },
       {
         "machine_type": "trim",
-        "duration_min": 8,
+        "duration_min": 6,
         "consumes": {
           "fan_housing_raw": 1
         },
@@ -67,7 +67,7 @@
       },
       {
         "machine_type": "trim",
-        "duration_min": 7,
+        "duration_min": 3,
         "consumes": {
           "fan_blades_raw": 1
         },
@@ -77,7 +77,7 @@
       },
       {
         "machine_type": "assembly",
-        "duration_min": 12,
+        "duration_min": 10,
         "consumes": {
           "fan_housing": 1,
           "fan_blades": 1,
@@ -91,7 +91,7 @@
         "machine_type": "qc_pack",
         "duration_min": 8,
         "consumes": {
-          "fan_assembled": 1,
+          "fan_assembled": 4,
           "fan_box": 1
         },
         "produces": {
@@ -102,7 +102,7 @@
     "lamp": [
       {
         "machine_type": "plastic_press",
-        "duration_min": 16,
+        "duration_min": 6,
         "consumes": {
           "polymer_pellets": 3,
           "mold_release": 1
@@ -113,7 +113,7 @@
       },
       {
         "machine_type": "plastic_press",
-        "duration_min": 14,
+        "duration_min": 8,
         "consumes": {
           "polymer_pellets": 2,
           "mold_release": 1
@@ -124,7 +124,7 @@
       },
       {
         "machine_type": "trim",
-        "duration_min": 8,
+        "duration_min": 5,
         "consumes": {
           "lamp_body_raw": 1
         },
@@ -134,7 +134,7 @@
       },
       {
         "machine_type": "trim",
-        "duration_min": 7,
+        "duration_min": 3,
         "consumes": {
           "lamp_shade_raw": 1
         },
@@ -144,7 +144,7 @@
       },
       {
         "machine_type": "assembly",
-        "duration_min": 14,
+        "duration_min": 6,
         "consumes": {
           "lamp_body": 1,
           "lamp_shade": 1,
@@ -156,43 +156,33 @@
       },
       {
         "machine_type": "qc_pack",
-        "duration_min": 8,
+        "duration_min": 6,
         "consumes": {
           "lamp_assembled": 1,
           "lamp_box": 1
         },
         "produces": {
-          "lamp": 1
+          "lamp": 4
         }
       }
     ],
     "plastic_cap": [
       {
         "machine_type": "plastic_press",
-        "duration_min": 10,
+        "duration_min": 1,
         "consumes": {
           "polymer_pellets": 1,
           "mold_release": 1
         },
         "produces": {
-          "cap_blank": 1
-        }
-      },
-      {
-        "machine_type": "trim",
-        "duration_min": 6,
-        "consumes": {
-          "cap_blank": 1
-        },
-        "produces": {
-          "cap_finished": 1
+          "cap_finished": 5
         }
       },
       {
         "machine_type": "qc_pack",
-        "duration_min": 6,
+        "duration_min": 2,
         "consumes": {
-          "cap_finished": 1,
+          "cap_finished": 5,
           "cap_bag": 1
         },
         "produces": {
@@ -235,7 +225,7 @@
       "product": "plastic_cap",
       "deadline_min": 260,
       "priority": 3,
-      "qty": 600
+      "qty": 200
     },
     {
       "id": "ORD-006-Fan",

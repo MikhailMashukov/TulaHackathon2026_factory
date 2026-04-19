@@ -84,3 +84,32 @@ def test_events_produce_event_object():
         assert ev.id
         assert ev.type == etype
         assert ev.description_ru
+
+
+def test_replan_scales_duration_by_order_qty():
+    state = GameState(
+        machines=[Machine(id="M1", type="plastic_press", name_ru="Пресс-1")],
+        orders=[
+            Order(
+                id="ORD-001",
+                product="fan",
+                deadline_min=999,
+                priority=1,
+                qty=3,
+                operations=[
+                    Operation(
+                        id="OP-001-1",
+                        order_id="ORD-001",
+                        machine_type="plastic_press",
+                        duration_min=5,
+                        seq=1,
+                    )
+                ],
+            )
+        ],
+    )
+
+    schedule = replan(state)
+    assert len(schedule) == 1
+    assert schedule[0].start_min == 0
+    assert schedule[0].end_min == 15

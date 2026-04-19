@@ -44,9 +44,9 @@ def _active_qc_recheck_extra(state: GameState) -> Dict[str, int]:
     return out
 
 
-def effective_duration_min(state: GameState, op: Operation, start_min: int) -> int:
+def effective_duration_min(state: GameState, op: Operation, start_min: int, qty: int = 1) -> int:
     """Расчёт длительности операции с учётом активных событий."""
-    duration = op.duration_min
+    duration = op.duration_min * max(qty, 1)
 
     # qc_recheck: добавочный цикл проверки конкретной операции.
     extra_qc = _active_qc_recheck_extra(state).get(op.id, 0)
@@ -102,7 +102,7 @@ def replan(state: GameState) -> List[ScheduledOp]:
             best_id = m.id
             best_start = max(machine_free_at[m.id], order_op_end[order.id], order_blocked_until.get(order.id, state.now))
 
-        end = best_start + effective_duration_min(state, op, best_start)
+        end = best_start + effective_duration_min(state, op, best_start, order.qty)
         schedule.append(ScheduledOp(op_id=op.id, machine_id=best_id, start_min=best_start, end_min=end))
         machine_free_at[best_id] = end
         order_op_end[order.id] = end

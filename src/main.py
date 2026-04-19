@@ -126,7 +126,9 @@ def move_op(req: MoveReq):
 
     target.machine_id = req.machine_id
     target.start_min = req.start_min
-    target.end_min = req.start_min + effective_duration_min(state, op, req.start_min)
+    order = next((o for o in state.orders if o.id == op.order_id), None)
+    qty = order.qty if order else 1
+    target.end_min = req.start_min + effective_duration_min(state, op, req.start_min, qty)
     state.score = compute_score(state)
     log.info("move %s → %s @%d, score=%.1f", req.op_id, req.machine_id, req.start_min, state.score.get("total", 0))
     return state.to_dict()
