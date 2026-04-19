@@ -27,7 +27,7 @@ let groups = null;
 let items = null;
 let lastState = null;
 let simSpeed = 1;
-let tickerHandle = null;
+let tickIntervalHandle = null;
 
 let localState = null;
 let useClientSimulation = true;
@@ -80,6 +80,23 @@ function applyEventEffect(state, event) {
   }
 }
 
+function autoResolveLocalEvents(state) {
+  const ttlByType = {
+    breakdown: 40,
+    no_operator: 30,
+    supply_delay: 45,
+    qc_recheck: 20,
+    rush_order: 25,
+    overload: 20,
+  };
+
+  for (const e of state.events || []) {
+    if (e.resolved) continue;
+    const ttl = ttlByType[e.type] ?? 30;
+    if (state.now - e.triggered_at >= ttl) e.resolved = true;
+  }
+}
+
 function calculateScore(state) {
   const totalOrders = state.orders?.length || 0;
   const completed = state.orders?.filter(o => {
@@ -113,7 +130,7 @@ function calculateScore(state) {
   return s;
 }
 
-async function simulateTick(minutes) {
+function simulateTick(minutes) {
   if (!localState) return;
   localState.now += minutes;
   if (localState.now > localState.horizon_min) localState.now = localState.horizon_min;
@@ -133,7 +150,13 @@ async function simulateTick(minutes) {
     if (m.status === "no_operator" && Math.random() < 0.35) m.status = "idle";
   });
 
+  autoResolveLocalEvents(localState);
   localState.score = calculateScore(localState);
+}
+
+function syncLocalState(serverState) {
+  if (!useClientSimulation || !serverState) return;
+  localState = JSON.parse(JSON.stringify(serverState));
 }
 
 /* ===================== RENDER ===================== */
@@ -264,10 +287,6 @@ function renderMachines(state) {
             <div>${queue} оп / ${queuedOrders.size} парт.</div>
           </div>
         </div>
-        <div class="buffer">
-          <h4>Выход</h4>
-          ${renderMaterialStacks(outputByMachine[m.id] || {})}
-        </div>
       </div>`;
     })
     .join("");
@@ -379,6 +398,7 @@ function refreshSpeedButtons() {
 function setSpeed(v) {
   simSpeed = v;
   refreshSpeedButtons();
+  restartTickTimer();
 }
 
 /* ===================== MAIN ===================== */
@@ -392,7 +412,7 @@ async function refresh() {
 
   applyDayNightTheme(state.now);
   document.getElementById("now-readout").textContent = formatGameTime(state.now);
-  document.getElementById("horizon-readout").textContent = formatGameTime(state.horizon_min);
+  document.getElementById("horizon-readout").textContent = formatGameTime(state.now);
 
   renderMachines(state);
   renderTimeline(state);
@@ -402,13 +422,34 @@ async function refresh() {
   lastState = state;
 }
 
-async function loopTick() {
-  if (!lastState || simSpeed <= 0) return;
+function timingBySpeed(speed) {
+  if (speed <= 0) return null;
+  if (speed === 1) return { intervalMs: 1000, gameMinutes: 1 };
+  if (speed === 4) return { intervalMs: 500, gameMinutes: 2 };
+  if (speed === 20) return { intervalMs: 200, gameMinutes: 4 };
+  return { intervalMs: 1000, gameMinutes: speed };
+}
+
+function restartTickTimer() {
+  const t = timingBySpeed(simSpeed);
+  if (tickIntervalHandle) {
+    clearInterval(tickIntervalHandle);
+    tickIntervalHandle = null;
+  }
+  if (!t) return;
+  tickIntervalHandle = setInterval(() => {
+    loopTick(t.gameMinutes);
+  }, t.intervalMs);
+}
+
+async function loopTick(gameMinutes) {
+  if (simSpeed <= 0) return;
+  if (!lastState && !localState) return;
   try {
     if (useClientSimulation) {
-      simulateTick(simSpeed);
+      simulateTick(gameMinutes);
     } else {
-      await api("/api/tick", { method: "POST", body: { minutes: simSpeed } });
+      await api("/api/tick", { method: "POST", body: { minutes: gameMinutes } });
     }
     await refresh();
   } catch (e) {
@@ -418,12 +459,14 @@ async function loopTick() {
 }
 
 async function doReplan() {
-  await api("/api/schedule/replan", { method: "POST" });
+  const serverState = await api("/api/schedule/replan", { method: "POST" });
+  syncLocalState(serverState);
   await refresh();
 }
 
 async function randomEvent() {
   const r = await api("/api/event/random", { method: "POST", body: {} });
+  syncLocalState(r.state);
   await refresh();
   setTimeout(() => askCopilot(r.event.id), 200);
 }
@@ -436,7 +479,8 @@ async function askCopilot(eventId) {
 }
 
 async function reset() {
-  await api("/api/reset", { method: "POST" });
+  const serverState = await api("/api/reset", { method: "POST" });
+  syncLocalState(serverState);
   setSpeed(1);
   await refresh();
   document.getElementById("advice-box").textContent = "Состояние сброшено.";
@@ -447,9 +491,19 @@ async function init() {
     const serverInit = await api("/api/state");
     localState = JSON.parse(JSON.stringify(serverInit));
   }
+
+  window.setSpeed = setSpeed;
+  window.doReplan = doReplan;
+  window.randomEvent = randomEvent;
+  window.askCopilot = askCopilot;
+  window.reset = reset;
+  window.openOrdersModal = openOrdersModal;
+  window.openRoutesModal = openRoutesModal;
+  window.closeModal = closeModal;
+  window.closeModalById = closeModalById;
+
   await refresh();
   setSpeed(1);
-  tickerHandle = setInterval(loopTick, 1000);
 }
 
 init();

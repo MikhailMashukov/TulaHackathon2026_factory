@@ -63,7 +63,7 @@ class GameState:
     events: List[Event] = field(default_factory=list)
     score: Dict = field(default_factory=dict)
     advice_log: List[Dict] = field(default_factory=list)
-    horizon_min: int = 480
+    horizon_min: int = 2000
 
     def to_dict(self) -> dict:
         return {

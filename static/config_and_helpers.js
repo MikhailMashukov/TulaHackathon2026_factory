@@ -127,84 +127,96 @@ export function operationById(state, opId) {
 export function computeMachineBuffers(state) {
   const now = state.now;
   const scheduleByOp = {};
-  for (const s of state.schedule) scheduleByOp[s.op_id] = s;
+  for (const s of state.schedule || []) scheduleByOp[s.op_id] = s;
 
   const opById = {};
-  for (const order of state.orders) {
-    for (const op of order.operations || []) {
-      opById[op.id] = op;
-    }
-  }
-
   const opsByOrder = {};
-  for (const o of state.orders) {
-    opsByOrder[o.id] = [...o.operations].sort((a, b) => a.seq - b.seq);
+  const producedMaterials = new Set();
+  for (const order of state.orders || []) {
+    const sortedOps = [...(order.operations || [])].sort((a, b) => a.seq - b.seq);
+    opsByOrder[order.id] = sortedOps;
+    for (const op of sortedOps) {
+      opById[op.id] = op;
+      for (const mat of Object.keys(op.produces || {})) producedMaterials.add(mat);
+    }
   }
 
   const inputByMachine = {};
   const outputByMachine = {};
-
-  for (const machine of state.machines) {
+  for (const machine of state.machines || []) {
     inputByMachine[machine.id] = {};
     outputByMachine[machine.id] = {};
   }
 
-  for (const order of state.orders) {
+  // Реальные WIP-буферы между операциями:
+  // детали появляются в output предыдущего станка после завершения операции
+  // и переезжают во input следующего только когда следующая операция ещё не стартовала.
+  for (const order of state.orders || []) {
     const qty = order.qty || 10;
     const ops = opsByOrder[order.id] || [];
+
     for (let i = 0; i < ops.length; i++) {
       const op = ops[i];
       const sch = scheduleByOp[op.id];
       if (!sch) continue;
 
-      if (sch.start_min > now) {
-        for (const [mat, n] of Object.entries(op.consumes || {})) {
-          if (mat.startsWith("supplier_")) continue;
-          inputByMachine[sch.machine_id][mat] = (inputByMachine[sch.machine_id][mat] || 0) + n * qty;
+      const isCompleted = sch.end_min <= now;
+      if (!isCompleted) continue;
+
+      const next = ops[i + 1];
+      const nextSch = next ? scheduleByOp[next.id] : null;
+      const nextStarted = nextSch ? nextSch.start_min <= now : false;
+
+      if (nextSch && !nextStarted) {
+        for (const [mat, n] of Object.entries(op.produces || {})) {
+          inputByMachine[nextSch.machine_id][mat] = (inputByMachine[nextSch.machine_id][mat] || 0) + n * qty;
         }
+        continue;
       }
 
-      if (sch.end_min <= now) {
-        const next = ops[i + 1];
-        const nextSch = next ? scheduleByOp[next.id] : null;
-        const nextStarted = nextSch ? nextSch.start_min <= now : false;
-        if (!nextStarted) {
-          for (const [mat, n] of Object.entries(op.produces || {})) {
-            outputByMachine[sch.machine_id][mat] = (outputByMachine[sch.machine_id][mat] || 0) + n * qty;
-          }
+      if (!nextSch || !nextStarted) {
+        for (const [mat, n] of Object.entries(op.produces || {})) {
+          outputByMachine[sch.machine_id][mat] = (outputByMachine[sch.machine_id][mat] || 0) + n * qty;
         }
       }
     }
   }
 
-  // Поставки от поставщиков (визуально)
+  // Визуализация складского сырья (Вариант 2):
+  // 1) всегда показываем одну пачку (10 шт.) для каждого внешнего материала на станке;
+  // 2) если за последние 2 минуты стартовала операция, пачка временно уменьшается на расход.
   const supplierSetByMachine = {};
-  for (const s of state.schedule) {
+  for (const s of state.schedule || []) {
     const op = opById[s.op_id];
     if (!op) continue;
-    const supplierMats = Object.keys(op.consumes || {}).filter((mat) => mat.startsWith("supplier_"));
+    const supplierMats = Object.keys(op.consumes || {}).filter(
+      (mat) => mat.startsWith("supplier_") || !producedMaterials.has(mat)
+    );
     if (!supplierMats.length) continue;
     supplierSetByMachine[s.machine_id] = supplierSetByMachine[s.machine_id] || new Set();
     for (const mat of supplierMats) supplierSetByMachine[s.machine_id].add(mat);
   }
 
-  for (const machine of state.machines) {
+  const recentStarts = (state.schedule || []).filter((s) => {
+    const dt = now - s.start_min;
+    return dt >= 0 && dt < 2;
+  });
+
+  for (const machine of state.machines || []) {
     const supplierMats = supplierSetByMachine[machine.id] || new Set();
     for (const mat of supplierMats) {
       inputByMachine[machine.id][mat] = 10;
     }
+  }
 
-    const active = (state.schedule || []).find((s) => s.machine_id === machine.id && s.start_min <= now && s.end_min > now);
-    if (!active) continue;
-    const activeOp = opById[active.op_id];
-    if (!activeOp) continue;
-    const sinceStart = now - active.start_min;
-    if (sinceStart < 0 || sinceStart > 2) continue;
-
-    for (const [mat, need] of Object.entries(activeOp.consumes || {})) {
-      if (!mat.startsWith("supplier_")) continue;
-      const current = inputByMachine[machine.id][mat] ?? 10;
-      inputByMachine[machine.id][mat] = Math.max(0, current - need);
+  for (const s of recentStarts) {
+    const op = opById[s.op_id];
+    if (!op) continue;
+    for (const [mat, need] of Object.entries(op.consumes || {})) {
+      const isExternal = mat.startsWith("supplier_") || !producedMaterials.has(mat);
+      if (!isExternal) continue;
+      const current = inputByMachine[s.machine_id][mat] ?? 10;
+      inputByMachine[s.machine_id][mat] = Math.max(0, current - need);
     }
   }
 
