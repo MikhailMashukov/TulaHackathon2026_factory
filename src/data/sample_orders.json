@@ -2,361 +2,247 @@
   "machines": [
     {
       "id": "M1",
-      "type": "lathe",
-      "name_ru": "Токарный-1"
+      "type": "plastic_press",
+      "name_ru": "ПрессПласт-1"
     },
     {
       "id": "M2",
-      "type": "lathe",
-      "name_ru": "Токарный-2"
+      "type": "plastic_press",
+      "name_ru": "ПрессПласт-2"
     },
     {
       "id": "M3",
-      "type": "cnc_mill",
-      "name_ru": "ФрезерЧПУ-1"
+      "type": "trim",
+      "name_ru": "Доводка-1"
     },
     {
       "id": "M4",
-      "type": "cnc_mill",
-      "name_ru": "ФрезерЧПУ-2"
+      "type": "assembly",
+      "name_ru": "Сборка-1"
     },
     {
       "id": "M5",
-      "type": "plasma",
-      "name_ru": "Плазморез"
+      "type": "assembly",
+      "name_ru": "Сборка-2"
     },
     {
       "id": "M6",
-      "type": "weld",
-      "name_ru": "Сварочный"
-    },
-    {
-      "id": "M7",
-      "type": "paint",
-      "name_ru": "Покраска"
-    },
-    {
-      "id": "M8",
-      "type": "qc",
-      "name_ru": "ОТК"
-    },
-    {
-      "id": "M9",
-      "type": "pack",
-      "name_ru": "Упаковка"
+      "type": "qc_pack",
+      "name_ru": "ОТКУпак-1"
     }
   ],
   "products": {
-    "shaft": [
+    "fan": [
       {
-        "machine_type": "lathe",
-        "duration_min": 30,
+        "machine_type": "plastic_press",
+        "duration_min": 20,
         "consumes": {
-          "iron_blank": 4,
-          "coil_roll": 1
+          "polymer_pellets": 4,
+          "mold_release": 1
         },
         "produces": {
-          "turned_core": 1
+          "fan_housing_raw": 1
         }
       },
       {
-        "machine_type": "cnc_mill",
-        "duration_min": 25,
+        "machine_type": "plastic_press",
+        "duration_min": 18,
         "consumes": {
-          "turned_core": 1,
-          "coolant_pack": 1
+          "polymer_pellets": 3,
+          "mold_release": 1
         },
         "produces": {
-          "milled_core": 1
+          "fan_blades_raw": 1
         }
       },
       {
-        "machine_type": "qc",
-        "duration_min": 12,
+        "machine_type": "trim",
+        "duration_min": 8,
         "consumes": {
-          "milled_core": 1,
-          "qc_gauge_set": 1
+          "fan_housing_raw": 1
         },
         "produces": {
-          "approved_core": 1
+          "fan_housing": 1
         }
       },
       {
-        "machine_type": "pack",
+        "machine_type": "trim",
         "duration_min": 7,
         "consumes": {
-          "approved_core": 1,
-          "box_small": 1
+          "fan_blades_raw": 1
         },
         "produces": {
-          "shaft": 1
-        }
-      }
-    ],
-    "sheet_frame": [
-      {
-        "machine_type": "plasma",
-        "duration_min": 18,
-        "consumes": {
-          "steel_sheet": 6,
-          "plasma_gas": 1
-        },
-        "produces": {
-          "cut_frame_parts": 1
+          "fan_blades": 1
         }
       },
       {
-        "machine_type": "weld",
-        "duration_min": 25,
-        "consumes": {
-          "cut_frame_parts": 1,
-          "welding_wire": 2
-        },
-        "produces": {
-          "welded_frame": 1
-        }
-      },
-      {
-        "machine_type": "cnc_mill",
-        "duration_min": 30,
-        "consumes": {
-          "welded_frame": 1,
-          "fixture_set": 1
-        },
-        "produces": {
-          "machined_frame": 1
-        }
-      },
-      {
-        "machine_type": "paint",
-        "duration_min": 50,
-        "consumes": {
-          "machined_frame": 1,
-          "paint_powder": 2
-        },
-        "produces": {
-          "painted_frame": 1
-        }
-      },
-      {
-        "machine_type": "qc",
+        "machine_type": "assembly",
         "duration_min": 12,
         "consumes": {
-          "painted_frame": 1,
-          "qc_gauge_set": 1
+          "fan_housing": 1,
+          "fan_blades": 1,
+          "supplier_motor": 1
         },
         "produces": {
-          "approved_frame": 1
+          "fan_assembled": 1
         }
       },
       {
-        "machine_type": "pack",
+        "machine_type": "qc_pack",
         "duration_min": 8,
         "consumes": {
-          "approved_frame": 1,
-          "box_large": 1
+          "fan_assembled": 1,
+          "fan_box": 1
         },
         "produces": {
-          "sheet_frame": 1
+          "fan": 1
         }
       }
     ],
-    "assembly_unit": [
+    "lamp": [
       {
-        "machine_type": "lathe",
-        "duration_min": 20,
+        "machine_type": "plastic_press",
+        "duration_min": 16,
         "consumes": {
-          "alloy_blank": 3,
-          "brass_bushing": 2
+          "polymer_pellets": 3,
+          "mold_release": 1
         },
         "produces": {
-          "turned_module": 1
+          "lamp_body_raw": 1
         }
       },
       {
-        "machine_type": "cnc_mill",
-        "duration_min": 35,
+        "machine_type": "plastic_press",
+        "duration_min": 14,
         "consumes": {
-          "turned_module": 1,
-          "coolant_pack": 1
+          "polymer_pellets": 2,
+          "mold_release": 1
         },
         "produces": {
-          "milled_module": 1
+          "lamp_shade_raw": 1
         }
       },
       {
-        "machine_type": "weld",
-        "duration_min": 20,
-        "consumes": {
-          "milled_module": 1,
-          "welding_wire": 1
-        },
-        "produces": {
-          "welded_module": 1
-        }
-      },
-      {
-        "machine_type": "paint",
-        "duration_min": 45,
-        "consumes": {
-          "welded_module": 1,
-          "paint_powder": 1
-        },
-        "produces": {
-          "painted_module": 1
-        }
-      },
-      {
-        "machine_type": "qc",
-        "duration_min": 12,
-        "consumes": {
-          "painted_module": 1,
-          "qc_gauge_set": 1
-        },
-        "produces": {
-          "approved_module": 1
-        }
-      },
-      {
-        "machine_type": "pack",
+        "machine_type": "trim",
         "duration_min": 8,
         "consumes": {
-          "approved_module": 1,
-          "box_medium": 1
+          "lamp_body_raw": 1
         },
         "produces": {
-          "assembly_unit": 1
+          "lamp_body": 1
+        }
+      },
+      {
+        "machine_type": "trim",
+        "duration_min": 7,
+        "consumes": {
+          "lamp_shade_raw": 1
+        },
+        "produces": {
+          "lamp_shade": 1
+        }
+      },
+      {
+        "machine_type": "assembly",
+        "duration_min": 14,
+        "consumes": {
+          "lamp_body": 1,
+          "lamp_shade": 1,
+          "supplier_electronics": 1
+        },
+        "produces": {
+          "lamp_assembled": 1
+        }
+      },
+      {
+        "machine_type": "qc_pack",
+        "duration_min": 8,
+        "consumes": {
+          "lamp_assembled": 1,
+          "lamp_box": 1
+        },
+        "produces": {
+          "lamp": 1
         }
       }
     ],
-    "bracket": [
+    "plastic_cap": [
       {
-        "machine_type": "plasma",
-        "duration_min": 12,
-        "consumes": {
-          "steel_sheet": 2,
-          "plasma_gas": 1
-        },
-        "produces": {
-          "cut_bracket": 1
-        }
-      },
-      {
-        "machine_type": "weld",
-        "duration_min": 18,
-        "consumes": {
-          "cut_bracket": 1,
-          "welding_wire": 1
-        },
-        "produces": {
-          "welded_bracket": 1
-        }
-      },
-      {
-        "machine_type": "paint",
-        "duration_min": 45,
-        "consumes": {
-          "welded_bracket": 1,
-          "paint_powder": 1
-        },
-        "produces": {
-          "painted_bracket": 1
-        }
-      },
-      {
-        "machine_type": "qc",
+        "machine_type": "plastic_press",
         "duration_min": 10,
         "consumes": {
-          "painted_bracket": 1,
-          "qc_gauge_set": 1
+          "polymer_pellets": 1,
+          "mold_release": 1
         },
         "produces": {
-          "approved_bracket": 1
+          "cap_blank": 1
         }
       },
       {
-        "machine_type": "pack",
+        "machine_type": "trim",
         "duration_min": 6,
         "consumes": {
-          "approved_bracket": 1,
-          "box_small": 1
+          "cap_blank": 1
         },
         "produces": {
-          "bracket": 1
+          "cap_finished": 1
+        }
+      },
+      {
+        "machine_type": "qc_pack",
+        "duration_min": 6,
+        "consumes": {
+          "cap_finished": 1,
+          "cap_bag": 1
+        },
+        "produces": {
+          "plastic_cap": 1
         }
       }
     ]
   },
   "orders": [
     {
-      "id": "ORD-001",
-      "product": "shaft",
-      "deadline_min": 120,
+      "id": "ORD-001-Fan",
+      "product": "fan",
+      "deadline_min": 130,
       "priority": 1,
-      "qty": 10
+      "qty": 30
     },
     {
-      "id": "ORD-002",
-      "product": "sheet_frame",
-      "deadline_min": 250,
-      "priority": 2,
-      "qty": 10
-    },
-    {
-      "id": "ORD-003",
-      "product": "shaft",
-      "deadline_min": 150,
-      "priority": 1,
-      "qty": 10
-    },
-    {
-      "id": "ORD-004",
-      "product": "assembly_unit",
-      "deadline_min": 300,
-      "priority": 2,
-      "qty": 10
-    },
-    {
-      "id": "ORD-005",
-      "product": "bracket",
-      "deadline_min": 200,
-      "priority": 2,
-      "qty": 10
-    },
-    {
-      "id": "ORD-006",
-      "product": "sheet_frame",
-      "deadline_min": 320,
-      "priority": 3,
-      "qty": 10
-    },
-    {
-      "id": "ORD-007",
-      "product": "shaft",
+      "id": "ORD-002-Lamp",
+      "product": "lamp",
       "deadline_min": 180,
       "priority": 2,
       "qty": 20
     },
     {
-      "id": "ORD-008",
-      "product": "assembly_unit",
-      "deadline_min": 380,
-      "priority": 1,
-      "qty": 20
-    },
-    {
-      "id": "ORD-009",
-      "product": "bracket",
-      "deadline_min": 270,
+      "id": "ORD-003-Cap",
+      "product": "plastic_cap",
+      "deadline_min": 120,
       "priority": 3,
-      "qty": 20
+      "qty": 400
     },
     {
-      "id": "ORD-010",
-      "product": "sheet_frame",
-      "deadline_min": 420,
+      "id": "ORD-004-Fan",
+      "product": "fan",
+      "deadline_min": 240,
       "priority": 2,
       "qty": 20
+    },
+    {
+      "id": "ORD-005-Cap",
+      "product": "plastic_cap",
+      "deadline_min": 260,
+      "priority": 3,
+      "qty": 600
+    },
+    {
+      "id": "ORD-006-Fan",
+      "product": "fan",
+      "deadline_min": 480,
+      "priority": 3,
+      "qty": 40
     }
   ]
 }
